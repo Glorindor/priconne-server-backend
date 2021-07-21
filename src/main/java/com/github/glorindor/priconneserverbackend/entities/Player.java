@@ -14,6 +14,8 @@ public @Data class Player {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int playerId;
 
+    private String playerName;
+
     @Enumerated
     private Role role;
 
@@ -21,4 +23,19 @@ public @Data class Player {
 
     @OneToMany
     private Set<CharacterData> unownedCharacterSet;
+
+    @OneToMany(mappedBy = "player")
+    private Set<ClanBattleBossDamage> clanBattleBossDamages;
+
+    /**
+     * Instantiates Player with limited field information.
+     *
+     * Most suited for changing from JSON as enumerated type is expected to be a String.
+     * @param newPlayer contains Name, Lvl, Role information.
+     */
+    public Player(NewPlayer newPlayer) {
+        this.playerName = newPlayer.getPlayerName();
+        this.role = Role.valueOf(newPlayer.getRole());
+        this.lvl = newPlayer.getLvl();
+    }
 }

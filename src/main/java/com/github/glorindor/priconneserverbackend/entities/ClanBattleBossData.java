@@ -4,24 +4,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@IdClass(ClanBattleBossDataId.class)
 @AllArgsConstructor @NoArgsConstructor
 public @Data class ClanBattleBossData {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int battleId; // easier to store and refer
+
     private int bossId;
 
-    @Id
     private int difficulty;
 
     @OneToMany
     private Set<Team> recommendedTeams;
+
+    @OneToMany(mappedBy = "clanBattleBossData")
+    private Set<ClanBattleBossDamage> clanBattleBossDamages;
 
     /**
      * Return the clan battle ID.
