@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CharacterDataRepository extends CrudRepository<CharacterData, Integer> {
-    Optional<CharacterData> findByUnitName(String unitName);
+public interface CharacterDataDao extends CrudRepository<CharacterData, Integer> {
+    CharacterData findByUnitName(String unitName);
 }

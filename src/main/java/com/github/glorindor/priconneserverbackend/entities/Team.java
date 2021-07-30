@@ -16,4 +16,8 @@ public @Data class Team {
 
     @OneToMany
     private Set<CharacterData> characterSet;
+
+    public Team(Set<CharacterData> characterSet) {
+        this.characterSet = characterSet;
+    }
 }

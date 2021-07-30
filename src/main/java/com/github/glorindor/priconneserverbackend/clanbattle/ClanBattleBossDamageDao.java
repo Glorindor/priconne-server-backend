@@ -6,9 +6,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
-public interface ClanBattleBossDamageRepository extends CrudRepository<ClanBattleBossDamage, ClanBattleBossDamageId> {
-    Optional<ClanBattleBossDamage> findByPlayerPlayerName(String name);
-    Optional<ClanBattleBossDamage> findByClanBattleBossDataBossId(int bossId);
+public interface ClanBattleBossDamageDao extends CrudRepository<ClanBattleBossDamage, ClanBattleBossDamageId> {
+    Set<ClanBattleBossDamage> findByPlayerPlayerId(int playerId);
+    Set<ClanBattleBossDamage> findByClanBattleBossDataBattleId(int battleId);
 }

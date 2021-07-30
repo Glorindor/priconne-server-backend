@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @AllArgsConstructor
-public @Data class NewPlayer {
-    private String playerName;
+public @Data class BossInfo {
+    private int bossId;
 
-    private String role;
-
-    private int lvl;
+    private int difficulty;
 }

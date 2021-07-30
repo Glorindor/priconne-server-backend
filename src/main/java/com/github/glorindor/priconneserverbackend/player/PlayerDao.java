@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PlayerRepository extends CrudRepository<Player, Integer> {
+public interface PlayerDao extends CrudRepository<Player, Integer> {
 }
