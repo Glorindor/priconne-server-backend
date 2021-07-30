@@ -132,6 +132,8 @@ public class ClanBattleController {
         Set<CharacterData> characterDataSet = characterDataService.getCharacterDataSetFromNameSet(characterNameSet);
 
         clanBattleBossData.get().getRecommendedTeams().add(new Team(characterDataSet));
+
+        clanBattleBossDataDao.save(clanBattleBossData.get());
     }
 
     /**
@@ -174,6 +176,8 @@ public class ClanBattleController {
                 team.setCharacterSet(characterDataSet);
             }
         }
+
+        clanBattleBossDataDao.save(clanBattleBossData.get());
     }
 
     /**
@@ -192,6 +196,7 @@ public class ClanBattleController {
 
         // remove the specified team
         clanBattleBossData.get().getRecommendedTeams().removeIf(team -> team.getTeamId() == teamId);
+        clanBattleBossDataDao.save(clanBattleBossData.get());
     }
 
     /**

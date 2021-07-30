@@ -138,8 +138,6 @@ public class PlayerController {
         Set<CharacterData> unownedCharacterSet = characterDataService.getCharacterDataSetFromNameSet(unownedCharacterNames);
         Set<CharacterData> playerUnownedCharacterSet = player.get().getUnownedCharacterSet();
 
-        //TODO: Separate the logic into service
-
         // update the set
         for (CharacterData data : unownedCharacterSet) {
             if (playerUnownedCharacterSet.contains(data)) { // if already present, remove

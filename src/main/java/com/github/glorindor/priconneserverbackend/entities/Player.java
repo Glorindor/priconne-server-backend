@@ -25,7 +25,7 @@ public class Player {
 
     private int lvl;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     private Set<CharacterData> unownedCharacterSet;
 
     // Fix the cyclic dependency issues

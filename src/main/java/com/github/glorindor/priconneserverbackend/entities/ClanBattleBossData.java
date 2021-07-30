@@ -22,7 +22,7 @@ public class ClanBattleBossData {
 
     private int difficulty;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.ALL})
     private Set<Team> recommendedTeams;
 
     @JsonIgnore
