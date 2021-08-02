@@ -25,8 +25,8 @@ public class ClanBattleDamageController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void addBossDamage(@RequestBody ClanBattleBossDamageId clanBattleBossDamageId) {
-        clanBattleBossDamageDao.save(clanBattleBossDamageService.createBossDamageFromId(clanBattleBossDamageId));
+    public @ResponseBody ClanBattleBossDamage addBossDamage(@RequestBody ClanBattleBossDamageId clanBattleBossDamageId) {
+        return clanBattleBossDamageDao.save(clanBattleBossDamageService.createBossDamageFromId(clanBattleBossDamageId));
     }
 
     /**
@@ -53,12 +53,12 @@ public class ClanBattleDamageController {
      */
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public void updateBossDamage(@RequestBody List<ClanBattleBossDamageId> clanBattleBossDamageIds) {
+    public @ResponseBody ClanBattleBossDamage updateBossDamage(@RequestBody List<ClanBattleBossDamageId> clanBattleBossDamageIds) {
         ClanBattleBossDamage formerDamage = clanBattleBossDamageService.createBossDamageFromId(clanBattleBossDamageIds.get(0));
         ClanBattleBossDamage newDamage = clanBattleBossDamageService.createBossDamageFromId(clanBattleBossDamageIds.get(1));
 
         clanBattleBossDamageDao.delete(formerDamage);
-        clanBattleBossDamageDao.save(newDamage);
+        return clanBattleBossDamageDao.save(newDamage);
     }
 
     /**

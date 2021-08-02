@@ -29,10 +29,10 @@ public class PlayerController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createPlayer(@RequestBody PlayerInfo playerBasicInfo) {
+    public @ResponseBody Player createPlayer(@RequestBody PlayerInfo playerBasicInfo) {
         Player player = new Player();
         player.update(playerBasicInfo);
-        playerDao.save(player);
+        return playerDao.save(player);
     }
 
     /**
@@ -74,7 +74,8 @@ public class PlayerController {
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updatePlayer(@PathVariable("id") int playerId, @RequestBody PlayerInfo playerBasicInfo) {
+    public @ResponseBody Player updatePlayer(@PathVariable("id") int playerId,
+                                             @RequestBody PlayerInfo playerBasicInfo) {
         // retrieve player so that the id stays the same
         Optional<Player> player = playerDao.findById(playerId);
 
@@ -83,7 +84,7 @@ public class PlayerController {
         }
 
         player.get().update(playerBasicInfo);
-        playerDao.save(player.get());
+        return playerDao.save(player.get());
     }
 
     /**
@@ -127,8 +128,8 @@ public class PlayerController {
      */
     @PostMapping("/{id}/character")
     @ResponseStatus(HttpStatus.OK)
-    public void addUnownedCharacter(@PathVariable("id") int playerId,
-                                    @RequestBody Set<String> unownedCharacterNames) {
+    public @ResponseBody Player addUnownedCharacter(@PathVariable("id") int playerId,
+                                                    @RequestBody Set<String> unownedCharacterNames) {
         Optional<Player> player = playerDao.findById(playerId);
 
         if (player.isEmpty()) {
@@ -146,7 +147,7 @@ public class PlayerController {
                 playerUnownedCharacterSet.add(data);
             }
         }
-        playerDao.save(player.get());
+        return playerDao.save(player.get());
     }
 
     /**

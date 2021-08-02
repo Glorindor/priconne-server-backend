@@ -26,10 +26,10 @@ public class ClanBattleController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public void createBoss(@RequestBody BossInfo bossInfo) {
+    public @ResponseBody ClanBattleBossData createBoss(@RequestBody BossInfo bossInfo) {
         ClanBattleBossData clanBattleBossData = new ClanBattleBossData();
         clanBattleBossData.update(bossInfo);
-        clanBattleBossDataDao.save(clanBattleBossData);
+        return clanBattleBossDataDao.save(clanBattleBossData);
     }
 
     /**
@@ -71,7 +71,8 @@ public class ClanBattleController {
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateBossData(@PathVariable("id") int battleId, @RequestBody BossInfo bossInfo) {
+    public @ResponseBody ClanBattleBossData updateBossData(@PathVariable("id") int battleId,
+                                                           @RequestBody BossInfo bossInfo) {
         Optional<ClanBattleBossData> bossData = clanBattleBossDataDao.findById(battleId);
 
         if (bossData.isEmpty()) {
@@ -79,7 +80,7 @@ public class ClanBattleController {
         }
 
         bossData.get().update(bossInfo);
-        clanBattleBossDataDao.save(bossData.get());
+        return clanBattleBossDataDao.save(bossData.get());
     }
 
     /**
@@ -122,7 +123,8 @@ public class ClanBattleController {
      */
     @PostMapping("/{id}/team")
     @ResponseStatus(HttpStatus.OK)
-    public void addTeam(@PathVariable("id") int battleId, @RequestBody Set<String> characterNameSet) {
+    public @ResponseBody ClanBattleBossData addTeam(@PathVariable("id") int battleId,
+                                                    @RequestBody Set<String> characterNameSet) {
         Optional<ClanBattleBossData> clanBattleBossData = clanBattleBossDataDao.findById(battleId);
 
         if (clanBattleBossData.isEmpty() || characterNameSet.size() != 5) {
@@ -133,7 +135,7 @@ public class ClanBattleController {
 
         clanBattleBossData.get().getRecommendedTeams().add(new Team(characterDataSet));
 
-        clanBattleBossDataDao.save(clanBattleBossData.get());
+        return clanBattleBossDataDao.save(clanBattleBossData.get());
     }
 
     /**
@@ -161,8 +163,8 @@ public class ClanBattleController {
      */
     @PutMapping("/{id}/team/{team_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateTeam(@PathVariable("id") int battleId, @PathVariable("team_id") int teamId,
-                           @RequestBody Set<String> characterNameSet) {
+    public @ResponseBody ClanBattleBossData updateTeam(@PathVariable("id") int battleId, @PathVariable("team_id") int teamId,
+                                                       @RequestBody Set<String> characterNameSet) {
         Optional<ClanBattleBossData> clanBattleBossData = clanBattleBossDataDao.findById(battleId);
 
         if (clanBattleBossData.isEmpty()) {
@@ -177,7 +179,7 @@ public class ClanBattleController {
             }
         }
 
-        clanBattleBossDataDao.save(clanBattleBossData.get());
+        return clanBattleBossDataDao.save(clanBattleBossData.get());
     }
 
     /**
