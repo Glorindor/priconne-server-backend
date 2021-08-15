@@ -56,7 +56,7 @@ public class PlayerControllerTest {
     Team recommendedTeam = new Team(1, new HashSet<>(Set.of(mifuyuData, suzumeData, limaData, monikaData, ayumiData)));
     Team notHaveCharacterTeam = new Team(9, new HashSet<>(Set.of(pecorineData, mifuyuData, suzumeData, limaData, monikaData)));
 
-    ClanBattleBossData clanBattleBossData = new ClanBattleBossData(1,1,1, null, null);
+    ClanBattleBossData clanBattleBossData = new ClanBattleBossData(1,10050001,1, null, null);
 
     ClanBattleBossDamageId clanBattleBossDamageIdNumberOne = new ClanBattleBossDamageId(1, 1, 999);
     ClanBattleBossDamageId clanBattleBossDamageIdNumberTwo = new ClanBattleBossDamageId(1, 1, 1200);
@@ -65,7 +65,6 @@ public class PlayerControllerTest {
     ClanBattleBossDamage clanBattleBossDamageNumberTwo;
 
     private PlayerInfo validPlayerInfo = new PlayerInfo("Test", "MEMBER", 99);
-    private PlayerInfo invalidPlayerInfo = new PlayerInfo("Invalid", "A", 12);
     private PlayerInfo leaderPlayerInfo = new PlayerInfo("Spok", "CLAN_LEADER", 98);
 
     private Player validPlayer;
@@ -103,6 +102,36 @@ public class PlayerControllerTest {
 
         validPlayer.setUnownedCharacterSet(null);
         verify(playerDao).save(validPlayer);
+    }
+
+    @Test
+    void testPostOperationBlankPlayerName() throws Exception {
+        PlayerInfo invalidPlayerInfo = new PlayerInfo("", "MEMBER", 99);
+
+        mockMvc.perform(post("/player")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidPlayerInfo)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPostOperationInvalidRole() throws Exception {
+        PlayerInfo invalidPlayerInfo = new PlayerInfo("Test", "Invalid", 99);
+
+        mockMvc.perform(post("/player")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(invalidPlayerInfo)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPostOperationInvalidLvl() throws Exception {
+        PlayerInfo invalidPlayerInfo = new PlayerInfo("Test", "MEMBER", -1);
+
+        mockMvc.perform(post("/player")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(invalidPlayerInfo)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -160,6 +189,39 @@ public class PlayerControllerTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(leaderPlayerInfo)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void testPutOperationBlankPlayerName() throws Exception {
+        when(playerDao.findById(1)).thenReturn(Optional.ofNullable(validPlayer));
+        PlayerInfo invalidPlayerInfo = new PlayerInfo("", "MEMBER", 99);
+
+        mockMvc.perform(put("/player/1")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidPlayerInfo)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPutOperationInvalidRole() throws Exception {
+        when(playerDao.findById(1)).thenReturn(Optional.ofNullable(validPlayer));
+        PlayerInfo invalidPlayerInfo = new PlayerInfo("Test", "Invalid", 99);
+
+        mockMvc.perform(put("/player/1")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidPlayerInfo)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPutOperationInvalidLvl() throws Exception {
+        when(playerDao.findById(1)).thenReturn(Optional.ofNullable(validPlayer));
+        PlayerInfo invalidPlayerInfo = new PlayerInfo("Test", "MEMBER", -1);
+
+        mockMvc.perform(put("/player/1")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidPlayerInfo)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -239,6 +301,16 @@ public class PlayerControllerTest {
         mockMvc.perform(post("/player/99/character")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(Set.of("Mifuyu, Suzume"))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPostUnownedCharacterSetEmptySet() throws Exception {
+        when(playerDao.findById(1)).thenReturn(Optional.ofNullable(validPlayer));
+
+        mockMvc.perform(post("/player/1/character")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(new HashSet<String>())))
                 .andExpect(status().isBadRequest());
     }
 

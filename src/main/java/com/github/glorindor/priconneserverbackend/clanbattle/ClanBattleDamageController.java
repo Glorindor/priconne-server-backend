@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class ClanBattleDamageController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ClanBattleBossDamage addBossDamage(@RequestBody ClanBattleBossDamageId clanBattleBossDamageId) {
+    public @ResponseBody ClanBattleBossDamage addBossDamage(@Valid @RequestBody ClanBattleBossDamageId clanBattleBossDamageId) {
         return clanBattleBossDamageDao.save(clanBattleBossService.createBossDamageFromId(clanBattleBossDamageId));
     }
 
@@ -73,7 +74,7 @@ public class ClanBattleDamageController {
      */
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
-    public void deleteBossDamage(@RequestBody ClanBattleBossDamageId clanBattleBossDamageId) {
+    public void deleteBossDamage(@Valid @RequestBody ClanBattleBossDamageId clanBattleBossDamageId) {
         clanBattleBossDamageDao.delete(clanBattleBossService.createBossDamageFromId(clanBattleBossDamageId));
     }
 }

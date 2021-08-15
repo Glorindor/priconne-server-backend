@@ -7,8 +7,11 @@ import com.github.glorindor.priconneserverbackend.entities.*;
 import com.github.glorindor.priconneserverbackend.exceptions.InvalidRequestInputException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -16,6 +19,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/player")
 @RequiredArgsConstructor
+@Validated
 public class PlayerController {
     private final CharacterDataService characterDataService;
 
@@ -29,7 +33,7 @@ public class PlayerController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody Player createPlayer(@RequestBody PlayerInfo playerBasicInfo) {
+    public @ResponseBody Player createPlayer(@Valid @RequestBody PlayerInfo playerBasicInfo) {
         Player player = new Player();
         player.update(playerBasicInfo);
         return playerDao.save(player);
@@ -75,7 +79,7 @@ public class PlayerController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Player updatePlayer(@PathVariable("id") int playerId,
-                                             @RequestBody PlayerInfo playerBasicInfo) {
+                                             @Valid @RequestBody PlayerInfo playerBasicInfo) {
         // retrieve player so that the id stays the same
         Optional<Player> player = playerDao.findById(playerId);
 
@@ -129,7 +133,7 @@ public class PlayerController {
     @PostMapping("/{id}/character")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody Player addUnownedCharacter(@PathVariable("id") int playerId,
-                                                    @RequestBody Set<String> unownedCharacterNames) {
+                                                    @NotEmpty @RequestBody Set<String> unownedCharacterNames) {
         Optional<Player> player = playerDao.findById(playerId);
 
         if (player.isEmpty()) {

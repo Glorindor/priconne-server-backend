@@ -36,7 +36,7 @@ public class CharacterDataControllerTest {
     CharacterData suzumeData = new CharacterData(107701, "Suzume(Summer)");
 
     @Test
-    void testValid() throws Exception{
+    void testGetOperation() throws Exception{
         Set<CharacterData> expectedResponseBody = Set.of(mifuyuData, suzumeData);
         when(characterDataDao.findAll()).thenReturn(expectedResponseBody);
         MvcResult mvcResult = mockMvc.perform(get("/character"))

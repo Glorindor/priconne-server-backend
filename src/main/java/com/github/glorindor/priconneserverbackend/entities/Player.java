@@ -1,12 +1,14 @@
 package com.github.glorindor.priconneserverbackend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.glorindor.priconneserverbackend.exceptions.InvalidRequestInputException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,11 +20,15 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int playerId;
 
+    @NotBlank(message = "A player must have a name")
     private String playerName;
 
     @Enumerated
+    @NotNull(message = "A role must not be null")
     private Role role;
 
+    @Positive(message = "A level cannot be lower than 1")
+    @Max(value = 200, message = "A level cannot be higher than 200")
     private int lvl;
 
     @OneToMany(cascade = {CascadeType.ALL})
@@ -65,7 +71,13 @@ public class Player {
      */
     public void update(PlayerInfo playerInfo) {
         this.playerName = playerInfo.getPlayerName();
-        this.role = Role.valueOf(playerInfo.getRole());
+
+        try {
+            this.role = Role.valueOf(playerInfo.getRole());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidRequestInputException();
+        }
+
         this.lvl = playerInfo.getLvl();
     }
 }

@@ -1,12 +1,15 @@
 package com.github.glorindor.priconneserverbackend.clanbattle;
 
 import com.github.glorindor.priconneserverbackend.character.CharacterDataService;
+import com.github.glorindor.priconneserverbackend.entities.CharacterData;
 import com.github.glorindor.priconneserverbackend.entities.*;
 import com.github.glorindor.priconneserverbackend.exceptions.InvalidRequestInputException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -14,6 +17,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("clanbattle")
 @RequiredArgsConstructor
+@Validated
 public class ClanBattleController {
     private final CharacterDataService characterDataService;
     private final ClanBattleBossService clanBattleBossService;
@@ -27,7 +31,7 @@ public class ClanBattleController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody ClanBattleBossData createBoss(@RequestBody BossInfo bossInfo) {
+    public @ResponseBody ClanBattleBossData createBoss(@Valid @RequestBody BossInfo bossInfo) {
         ClanBattleBossData clanBattleBossData = new ClanBattleBossData();
         clanBattleBossData.update(bossInfo);
         return clanBattleBossDataDao.save(clanBattleBossData);
@@ -73,7 +77,7 @@ public class ClanBattleController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ClanBattleBossData updateBossData(@PathVariable("id") int battleId,
-                                                           @RequestBody BossInfo bossInfo) {
+                                                           @Valid @RequestBody BossInfo bossInfo) {
         Optional<ClanBattleBossData> bossData = clanBattleBossDataDao.findById(battleId);
 
         if (bossData.isEmpty()) {

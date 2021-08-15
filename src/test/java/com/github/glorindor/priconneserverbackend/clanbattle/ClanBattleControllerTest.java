@@ -14,12 +14,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -65,8 +67,8 @@ public class ClanBattleControllerTest {
     Team firstTeam = new Team(1, new HashSet<>(Set.of(mifuyuData, suzumeData, limaData, monikaData, ayumiData)));
     Team secondTeam = new Team(9, new HashSet<>(Set.of(pecorineData, mifuyuData, suzumeData, limaData, monikaData)));
 
-    private BossInfo validBossInfo = new BossInfo(10001, 1);
-    private BossInfo secondBossInfo = new BossInfo(10002, 1);
+    private BossInfo validBossInfo = new BossInfo(10050001, 1);
+    private BossInfo secondBossInfo = new BossInfo(10050002, 1);
 
     private ClanBattleBossData validClanBattleBossData;
     private ClanBattleBossData secondClanBattleBossData;
@@ -104,7 +106,27 @@ public class ClanBattleControllerTest {
     }
 
     @Test
-    void testInvalidPostOperation() throws Exception {
+    void testPostOperationInvalidBossId() throws Exception {
+        BossInfo invalidBossInfo = new BossInfo(99999, 1);
+
+        mockMvc.perform(post("/clanbattle")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidBossInfo)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPostOperationInvalidDifficulty() throws Exception {
+        BossInfo invalidBossInfo = new BossInfo(10000000, 5);
+
+        mockMvc.perform(post("/clanbattle")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidBossInfo)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPostOperationNull() throws Exception {
         mockMvc.perform(post("/clanbattle")
                 .contentType("application/json")
                 .content(""))
@@ -152,12 +174,34 @@ public class ClanBattleControllerTest {
 
     @Test
     void testValidPutOperationById() throws Exception {
-        when(clanBattleBossDataDao.findById(0)).thenReturn(Optional.ofNullable(secondClanBattleBossData));
+        when(clanBattleBossDataDao.findById(0)).thenReturn(Optional.ofNullable(validClanBattleBossData));
 
         mockMvc.perform(put("/clanbattle/0")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(secondClanBattleBossData)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void testPutOperationInvalidBossId() throws Exception {
+        when(clanBattleBossDataDao.findById(0)).thenReturn(Optional.ofNullable(validClanBattleBossData));
+        BossInfo invalidBossInfo = new BossInfo(99999, 1);
+
+        mockMvc.perform(put("/clanbattle/0")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(invalidBossInfo)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPutOperationInvalidDifficulty() throws Exception {
+        when(clanBattleBossDataDao.findById(0)).thenReturn(Optional.ofNullable(validClanBattleBossData));
+        BossInfo invalidBossInfo = new BossInfo(10000000, 5);
+
+        mockMvc.perform(put("/clanbattle/0")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(invalidBossInfo)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -228,6 +272,14 @@ public class ClanBattleControllerTest {
     }
 
     @Test
+    void testPostTeamOperationCharacterNameSetNot5() throws Exception {
+        mockMvc.perform(post("/clanbattle")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(Set.of("Mifuyu"))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testInvalidPostTeamOperation() throws Exception {
         mockMvc.perform(post("/clanbattle")
                 .contentType("application/json")
@@ -273,6 +325,20 @@ public class ClanBattleControllerTest {
                 .andExpect(status().isOk());
 
         assertThat(teamClanBattleBossData.getRecommendedTeams()).isEqualTo(Set.of(firstTeam, secondTeam));
+    }
+
+    @Test
+    void testPutTeamOperationTeamSizeNot5() throws Exception {
+        when(clanBattleBossDataDao.findById(7)).thenReturn(Optional.ofNullable(teamClanBattleBossData));
+        doThrow(InvalidRequestInputException.class).when(clanBattleBossService).updateTeamFromRecommendedTeams(1, teamClanBattleBossData, Set.of("Mifuyu"));
+
+        mockMvc.perform(put("/clanbattle/7/team/1")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(Set.of("Mifuyu"))))
+                .andExpect(status().isBadRequest());
+
+        teamClanBattleBossData.getRecommendedTeams().add(secondTeam);
+        verify(clanBattleBossDataDao, never()).save(teamClanBattleBossData);
     }
 
     @Test

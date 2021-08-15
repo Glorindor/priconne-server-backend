@@ -54,7 +54,7 @@ public class ClanBattleDamageControllerTest {
         player = new Player();
         player.update(playerInfo);
 
-        clanBattleBossData = new ClanBattleBossData(1, 1, 1, null, null);
+        clanBattleBossData = new ClanBattleBossData(1, 10050001, 1, null, null);
         validBossDamage = new ClanBattleBossDamage(validId, clanBattleBossData, player);
         secondBossDamage = new ClanBattleBossDamage(secondId, clanBattleBossData, player);
     }
@@ -69,6 +69,36 @@ public class ClanBattleDamageControllerTest {
                 .andExpect(status().isOk());
 
         verify(clanBattleBossDamageDao).save(validBossDamage);
+    }
+
+    @Test
+    void testPostOperationInvalidBattleId() throws Exception {
+        ClanBattleBossDamageId invalidClanBattleBossDamageId = new ClanBattleBossDamageId(0, 1, 1);
+
+        mockMvc.perform(post("/clanbattle-damage")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidClanBattleBossDamageId)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPostOperationInvalidPlayerId() throws Exception {
+        ClanBattleBossDamageId invalidClanBattleBossDamageId = new ClanBattleBossDamageId(1, 0, 1);
+
+        mockMvc.perform(post("/clanbattle-damage")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(invalidClanBattleBossDamageId)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testPostOperationInvalidDefault() throws Exception {
+        ClanBattleBossDamageId invalidClanBattleBossDamageId = new ClanBattleBossDamageId(1, 1, 0);
+
+        mockMvc.perform(post("/clanbattle-damage")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(invalidClanBattleBossDamageId)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -144,5 +174,35 @@ public class ClanBattleDamageControllerTest {
                 .andExpect(status().isOk());
 
         verify(clanBattleBossDamageDao).delete(validBossDamage);
+    }
+
+    @Test
+    void testDeleteOperationInvalidBattleId() throws Exception {
+        ClanBattleBossDamageId invalidClanBattleBossDamageId = new ClanBattleBossDamageId(0, 1, 1);
+
+        mockMvc.perform(delete("/clanbattle-damage")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(invalidClanBattleBossDamageId)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testDeleteOperationInvalidPlayerId() throws Exception {
+        ClanBattleBossDamageId invalidClanBattleBossDamageId = new ClanBattleBossDamageId(1, 0, 1);
+
+        mockMvc.perform(delete("/clanbattle-damage")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidClanBattleBossDamageId)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testDeleteOperationInvalidDefault() throws Exception {
+        ClanBattleBossDamageId invalidClanBattleBossDamageId = new ClanBattleBossDamageId(1, 1, 0);
+
+        mockMvc.perform(delete("/clanbattle-damage")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(invalidClanBattleBossDamageId)))
+                .andExpect(status().isBadRequest());
     }
 }
