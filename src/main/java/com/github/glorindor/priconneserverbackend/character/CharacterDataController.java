@@ -14,8 +14,6 @@ import java.util.Set;
 public class CharacterDataController {
     private final CharacterDataDao characterDataDao;
 
-    private final CharacterDataService characterDataService;
-
     /**
      * Endpoint to returning all characters' data.
      * @return a {@link Set<CharacterData>} containing information.

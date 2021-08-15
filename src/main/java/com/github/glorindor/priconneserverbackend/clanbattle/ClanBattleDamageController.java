@@ -2,6 +2,7 @@ package com.github.glorindor.priconneserverbackend.clanbattle;
 
 import com.github.glorindor.priconneserverbackend.entities.ClanBattleBossDamage;
 import com.github.glorindor.priconneserverbackend.entities.ClanBattleBossDamageId;
+import com.github.glorindor.priconneserverbackend.exceptions.InvalidRequestInputException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ import java.util.Set;
 @RequestMapping("clanbattle-damage")
 @RequiredArgsConstructor
 public class ClanBattleDamageController {
-    private final ClanBattleBossDamageService clanBattleBossDamageService;
+    private final ClanBattleBossService clanBattleBossService;
 
     private final ClanBattleBossDamageDao clanBattleBossDamageDao;
 
@@ -26,7 +27,7 @@ public class ClanBattleDamageController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ClanBattleBossDamage addBossDamage(@RequestBody ClanBattleBossDamageId clanBattleBossDamageId) {
-        return clanBattleBossDamageDao.save(clanBattleBossDamageService.createBossDamageFromId(clanBattleBossDamageId));
+        return clanBattleBossDamageDao.save(clanBattleBossService.createBossDamageFromId(clanBattleBossDamageId));
     }
 
     /**
@@ -54,8 +55,12 @@ public class ClanBattleDamageController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody ClanBattleBossDamage updateBossDamage(@RequestBody List<ClanBattleBossDamageId> clanBattleBossDamageIds) {
-        ClanBattleBossDamage formerDamage = clanBattleBossDamageService.createBossDamageFromId(clanBattleBossDamageIds.get(0));
-        ClanBattleBossDamage newDamage = clanBattleBossDamageService.createBossDamageFromId(clanBattleBossDamageIds.get(1));
+        if (clanBattleBossDamageIds.size() != 2) {
+            throw new InvalidRequestInputException();
+        }
+
+        ClanBattleBossDamage formerDamage = clanBattleBossService.createBossDamageFromId(clanBattleBossDamageIds.get(0));
+        ClanBattleBossDamage newDamage = clanBattleBossService.createBossDamageFromId(clanBattleBossDamageIds.get(1));
 
         clanBattleBossDamageDao.delete(formerDamage);
         return clanBattleBossDamageDao.save(newDamage);
@@ -69,6 +74,6 @@ public class ClanBattleDamageController {
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
     public void deleteBossDamage(@RequestBody ClanBattleBossDamageId clanBattleBossDamageId) {
-        clanBattleBossDamageDao.delete(clanBattleBossDamageService.createBossDamageFromId(clanBattleBossDamageId));
+        clanBattleBossDamageDao.delete(clanBattleBossService.createBossDamageFromId(clanBattleBossDamageId));
     }
 }

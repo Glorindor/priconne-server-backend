@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CharacterDataServiceTest {
@@ -35,7 +36,7 @@ public class CharacterDataServiceTest {
     @Test
     void testGetCharacterDataFromCharacterNameInvalid() {
         // Set-up the expectation
-        Mockito.when(characterDataDao.findByUnitName("invalid")).thenReturn(null);
+        when(characterDataDao.findByUnitName("invalid")).thenReturn(null);
         Set<String> inputSet = Set.of("invalid");
 
         assertThatExceptionOfType(InvalidRequestInputException.class).isThrownBy(() -> {
@@ -46,8 +47,8 @@ public class CharacterDataServiceTest {
     @Test
     void testGetCharacterDataFromCharacterNameValid() {
         // Set-up the expectation
-        Mockito.when(characterDataDao.findByUnitName("Mifuyu")).thenReturn(mifuyuData);
-        Mockito.when(characterDataDao.findByUnitName("Suzume(Summer)")).thenReturn(suzumeData);
+        when(characterDataDao.findByUnitName("Mifuyu")).thenReturn(mifuyuData);
+        when(characterDataDao.findByUnitName("Suzume(Summer)")).thenReturn(suzumeData);
 
         Set<String> inputSet = Set.of("Mifuyu", "Suzume(Summer)");
 

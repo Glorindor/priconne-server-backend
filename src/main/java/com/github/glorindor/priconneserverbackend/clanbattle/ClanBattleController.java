@@ -16,6 +16,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ClanBattleController {
     private final CharacterDataService characterDataService;
+    private final ClanBattleBossService clanBattleBossService;
 
     private final ClanBattleBossDataDao clanBattleBossDataDao;
     private final ClanBattleBossDamageDao clanBattleBossDamageDao;
@@ -132,8 +133,14 @@ public class ClanBattleController {
         }
 
         Set<CharacterData> characterDataSet = characterDataService.getCharacterDataSetFromNameSet(characterNameSet);
+        Set<Team> recommendedTeamSet = clanBattleBossData.get().getRecommendedTeams();
 
-        clanBattleBossData.get().getRecommendedTeams().add(new Team(characterDataSet));
+        if (recommendedTeamSet == null) {
+            recommendedTeamSet = new HashSet<>();
+            clanBattleBossData.get().setRecommendedTeams(recommendedTeamSet);
+        }
+
+        recommendedTeamSet.add(new Team(characterDataSet));
 
         return clanBattleBossDataDao.save(clanBattleBossData.get());
     }
@@ -171,13 +178,7 @@ public class ClanBattleController {
             throw new InvalidRequestInputException();
         }
 
-        Set<CharacterData> characterDataSet = characterDataService.getCharacterDataSetFromNameSet(characterNameSet);
-
-        for (Team team : clanBattleBossData.get().getRecommendedTeams()) {
-            if (team.getTeamId() == teamId) {
-                team.setCharacterSet(characterDataSet);
-            }
-        }
+        clanBattleBossService.updateTeamFromRecommendedTeams(teamId, clanBattleBossData.get(), characterNameSet);
 
         return clanBattleBossDataDao.save(clanBattleBossData.get());
     }
