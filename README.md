@@ -1,7 +1,5 @@
 # Priconne Server Backend For Clanbattles
-
 ## Description
-
 This is a REST templates backend written in Java Spring to help clans to organize and track clanbattles. I thought of writing a website to replace and unify the stacks of excel sheets and discord announcements.
 
 ### Current Features
